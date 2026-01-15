@@ -1,17 +1,18 @@
 FROM alpine:latest
 
-# Install Lua 5.1, Luarocks, and build dependencies
+# Install Lua 5.1 and dependencies for Luvit
 RUN apk add --no-cache \
     lua5.1 \
-    lua5.1-dev \
-    luarocks \
+    curl \
+    bash \
+    git \
     gcc \
     musl-dev \
     make
 
-# Install Lua packages
-RUN luarocks install pegasus
-RUN luarocks install dkjson
+# Install Luvit
+RUN curl -fsSL https://github.com/luvit/lit/raw/master/get-lit.sh | sh
+RUN mv luvit lit luvi /usr/local/bin/
 
 # Working directory
 WORKDIR /app
@@ -26,5 +27,5 @@ ENV PORT=11081
 # Expose
 EXPOSE 11081
 
-# Start Lua Server
-CMD ["lua", "api/server.lua"]
+# Start Luvit Server
+CMD ["luvit", "api/server.lua"]
